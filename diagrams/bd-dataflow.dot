@@ -1,6 +1,8 @@
 digraph dataflow {
  label = "Typical data flow for semistructured big data";
  labelloc = top;
+ bgcolor = transparent;
+ node [fillcolor = white, style = filled];
  collectors [label=<collectors<br/><font point-size="10">API for receiving</font>>];
  sources [label=<other data sources<br/><font point-size="10">eg. production databases</font>>];
  dw [label=<data warehouse<br/><font point-size="10">eg. MapReduce / NoSQL cluster (too many to mention)</font>>];

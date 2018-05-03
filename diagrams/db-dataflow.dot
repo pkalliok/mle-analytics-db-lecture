@@ -1,6 +1,8 @@
 digraph dataflow {
  label = "Typical analytics database data flow";
  labelloc = top;
+ bgcolor = transparent;
+ node [fillcolor = white, style = filled];
  collectors [label=<collectors<br/><font point-size="10">API for receiving</font>>];
  queue [label=<message queue<br/><font point-size="10">eg. Kafka / Kinesis</font>>];
  batch [label=<batch updater<br/><font point-size="10">to make efficient imports</font>>];
