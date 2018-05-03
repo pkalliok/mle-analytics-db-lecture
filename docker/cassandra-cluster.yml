@@ -1,0 +1,20 @@
+version: '2'
+services:
+  seed-cassandra:
+    image: cassandra
+    ports: ["19042:9042"]
+  cassandra-1:
+    image: cassandra
+    depends_on: [seed-cassandra]
+    environment:
+      CASSANDRA_SEEDS: seed-cassandra
+  cassandra-2:
+    image: cassandra
+    depends_on: [seed-cassandra]
+    environment:
+      CASSANDRA_SEEDS: seed-cassandra
+  cqlsh:
+    image: cassandra
+    depends_on: [seed-cassandra]
+    command: cqlsh seed-cassandra
+
