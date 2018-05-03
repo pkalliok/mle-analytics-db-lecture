@@ -9,6 +9,10 @@ stop:
 	docker-compose -f couchdb/couchdb-cluster.yml down
 	rm -f stamps/cassandra-seed-up stamps/couchdb-seed-up
 
+data/cpi.csv:
+	curl https://download.bls.gov/pub/time.series/cu/cu.data.0.Current \
+	| sed 's#\([0-9]*\)\tM\([0-9]*\)#\1-\2-01#;s#[[:space:]]*$$##' > $@
+
 data/us-census.zip:
 	curl https://www2.census.gov/acs2013_1yr/summaryfile/2013_ACSSF_By_State_All_Tables/UnitedStates_All_Geographies.zip > $@
 
@@ -35,15 +39,20 @@ stamps/cassandra-cluster-up: cassandra/cassandra-cluster.yml stamps/cassandra-wa
 	docker-compose -f $< up -d cassandra-1 cassandra-2
 	touch $@
 
-stamps/cassandra-schema: cassandra/schema.cql stamps/cassandra-wait
-	cat $< | docker-compose -f cassandra/cassandra-cluster.yml run cqlsh
+stamps/cassandra-schema: cassandra/schema.cql cassandra/cpi-schema.cql stamps/cassandra-wait
+	cat $^ | docker-compose -f cassandra/cassandra-cluster.yml run cqlsh
 	touch $@
 
-stamps/cassandra-import: data/aineisto.csv stamps/cassandra-schema
+stamps/cassandra-import-example: data/aineisto.csv stamps/cassandra-schema
 	echo "COPY foobar.events (peer,time,address,referrer) FROM '/data/aineisto.csv';" \
 	| docker run -i --rm --network cassandra_default -v `pwd`/data:/data \
 		--name cassandra-import cassandra cqlsh seed-cassandra
 	touch $@
+
+stamps/cassandra-import-cpi: data/cpi.csv stamps/cassandra-schema
+	echo "copy cpi.price from '/data/cpi.csv' with DELIMITER='\\t';" \
+	| docker run -i --rm --network cassandra_default -v `pwd`/data:/data \
+		--name cassandra-import cassandra cqlsh seed-cassandra
 
 cqlsh: stamps/cassandra-wait
 	docker-compose -f cassandra/cassandra-cluster.yml run cqlsh
