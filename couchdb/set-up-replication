@@ -1,0 +1,12 @@
+#!/bin/bash
+
+curl -X PUT http://localhost:25984/_replicator
+curl -X POST http://localhost:25984/_replicator \
+-H 'Content-type: application/json' \
+-d '{
+	"source": { "url": "http://seed-couchdb:5984/events" },
+	"target": { "url": "http://localhost:5984/events" },
+	"create_target": true,
+	"continuous": true
+}'
+

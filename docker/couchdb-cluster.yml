@@ -3,5 +3,9 @@ services:
   seed-couchdb:
     image: couchdb
     ports: ["15984:5984"]
+  replicate-couchdb:
+    image: couchdb
+    depends_on: [seed-couchdb]
+    ports: ["25984:5984"]
 
 # vim:set sw=2:

@@ -1,11 +1,15 @@
 
-.PHONY: stop cqlsh cqlsh-2 logs
+.PHONY: stop cqlsh cqlsh-2 cas-logs cou-logs
 
 stop:
 	docker-compose -f docker/cassandra-cluster.yml down
+	docker-compose -f docker/couchdb-cluster.yml down
 
-logs:
+cas-logs:
 	docker-compose -f docker/cassandra-cluster.yml logs -f
+
+cou-logs:
+	docker-compose -f docker/couchdb-cluster.yml logs -f
 
 stamps/cassandra-seed-up: docker/cassandra-cluster.yml 
 	docker-compose -f $< up -d seed-cassandra
@@ -47,5 +51,10 @@ stamps/couchdb-wait: stamps/couchdb-seed-up
 
 stamps/couchdb-import: data/aineisto.csv couchdb/set-up-database stamps/couchdb-wait
 	./couchdb/set-up-database
+	touch $@
+
+stamps/couchdb-cluster-up: docker/couchdb-cluster.yml couchdb/set-up-replication stamps/couchdb-wait
+	docker-compose -f $< up -d replicate-couchdb
+	./couchdb/set-up-replication
 	touch $@
 
