@@ -36,3 +36,16 @@ cqlsh: stamps/cassandra-wait
 cqlsh-2: stamps/cassandra-cluster-up
 	docker run -it --rm --network docker_default --name cqlsh-2 cassandra cqlsh cassandra-2
 
+stamps/couchdb-seed-up: docker/couchdb-cluster.yml
+	docker-compose -f $< up -d seed-couchdb
+	touch $@
+
+stamps/couchdb-wait: stamps/couchdb-seed-up
+	until curl -s http://localhost:15984/ | grep -q '"couchdb":"Welcome"'; do \
+		echo -n .; sleep 2; done
+	touch $@
+
+stamps/couchdb-import: data/aineisto.csv couchdb/set-up-database stamps/couchdb-wait
+	./couchdb/set-up-database
+	touch $@
+

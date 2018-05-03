@@ -18,3 +18,4 @@ services:
     depends_on: [seed-cassandra]
     command: cqlsh seed-cassandra
 
+# vim:set sw=2:

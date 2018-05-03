@@ -1,0 +1,7 @@
+version: '2'
+services:
+  seed-couchdb:
+    image: couchdb
+    ports: ["15984:5984"]
+
+# vim:set sw=2:

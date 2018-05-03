@@ -1,0 +1,10 @@
+#!/bin/sh
+
+WHERE="`dirname $0`"
+
+curl -X PUT http://localhost:15984/events
+sed 's/,"/,/g;s/",/,/g;s/[\\"]/\\&/g' data/aineisto.csv \
+| $WHERE/csv_to_bulk_insert \
+| curl -X POST -H 'Content-type: application/json' -d@- http://localhost:15984/events/_bulk_docs \
+| jq length \
+| sed 's/$/ documents created/'

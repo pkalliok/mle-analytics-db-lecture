@@ -1,0 +1,5 @@
+#!/usr/bin/awk -f
+
+BEGIN { FS=","; print "{\"docs\":["; }
+$4 && !$5 { print "{\"peer\":\"" $1 "\",\"time\":\"" $2 "\",\"address\":\"" $3 "\", \"referrer\":\"" $4 "\"},"; }
+END { print "{}]}"; }
