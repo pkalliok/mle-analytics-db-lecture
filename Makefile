@@ -1,5 +1,8 @@
+DIAGRAMS=db-dataflow bd-dataflow
 
-.PHONY: stop cqlsh cqlsh-2 cas-logs cou-logs
+.PHONY: stop cqlsh cqlsh-2 cas-logs cou-logs docs
+
+docs: $(DIAGRAMS:%=diagrams/%.png)
 
 stop:
 	docker-compose -f cassandra/cassandra-cluster.yml down
@@ -58,4 +61,7 @@ stamps/couchdb-cluster-up: couchdb/couchdb-cluster.yml couchdb/set-up-replicatio
 	docker-compose -f $< up -d replicate-couchdb
 	./couchdb/set-up-replication
 	touch $@
+
+%.png: %.dot
+	dot -Tpng -o $@ $<
 

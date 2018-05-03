@@ -1,0 +1,15 @@
+digraph dataflow {
+ label = "Typical analytics database data flow";
+ labelloc = top;
+ collectors [label=<collectors<br/><font point-size="10">API for receiving</font>>];
+ queue [label=<message queue<br/><font point-size="10">eg. Kafka / Kinesis</font>>];
+ batch [label=<batch updater<br/><font point-size="10">to make efficient imports</font>>];
+ db [label=<analytics database<br/><font point-size="10">eg. Redshift / Snowflake</font>>];
+ sources [label=<other data sources<br/><font point-size="10">eg. production databases</font>>];
+ modeling [label=<data modeling<br/><font point-size="10">predictive analytics</font>>];
+ observations -> collectors -> queue -> batch -> db -> reports;
+ db -> "data marts" -> "visualisation tools";
+ db -> "analytics clusters" -> "visualisation tools";
+ "analytics clusters" -> modeling;
+ sources -> db;
+}

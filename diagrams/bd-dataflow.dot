@@ -1,0 +1,13 @@
+digraph dataflow {
+ label = "Typical data flow for semistructured big data";
+ labelloc = top;
+ collectors [label=<collectors<br/><font point-size="10">API for receiving</font>>];
+ sources [label=<other data sources<br/><font point-size="10">eg. production databases</font>>];
+ dw [label=<data warehouse<br/><font point-size="10">eg. MapReduce / NoSQL cluster (too many to mention)</font>>];
+ "data marts" [label=<SQL DB<br/><font point-size="10">for structured ad-hoc queries, eg. Presto</font>>];
+ collectors -> dw [label="async writes with LB"];
+ sources -> dw;
+ dw -> reports [label="DW cluster views/jobs"];
+ dw -> modeling;
+ dw -> "data marts" -> "visualisation tools";
+}
