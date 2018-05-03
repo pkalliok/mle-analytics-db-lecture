@@ -9,6 +9,9 @@ stop:
 	docker-compose -f couchdb/couchdb-cluster.yml down
 	rm -f stamps/cassandra-seed-up stamps/couchdb-seed-up
 
+data/us-census.zip:
+	curl https://www2.census.gov/acs2013_1yr/summaryfile/2013_ACSSF_By_State_All_Tables/UnitedStates_All_Geographies.zip > $@
+
 cas-logs:
 	docker-compose -f cassandra/cassandra-cluster.yml logs -f
 
