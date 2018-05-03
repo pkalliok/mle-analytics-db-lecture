@@ -12,6 +12,10 @@ stop:
 data/us-census.zip:
 	curl https://www2.census.gov/acs2013_1yr/summaryfile/2013_ACSSF_By_State_All_Tables/UnitedStates_All_Geographies.zip > $@
 
+data/us-census: data/us-census.zip
+	mkdir -p $@
+	(cd $@ && unzip ../us-census.zip)
+
 cas-logs:
 	docker-compose -f cassandra/cassandra-cluster.yml logs -f
 
