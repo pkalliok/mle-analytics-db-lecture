@@ -32,7 +32,10 @@ cou-logs:
 check-cpi: data/check_csv.py data/cpi.csv
 	python $< -d '	' data/cpi.csv
 
-check-aineisto: data/aineisto.csv data/check_csv.py 
+data/aineisto_fixed.csv: data/fix_aineisto.py data/aineisto.csv
+	python $< data/aineisto.csv > $@
+
+check-aineisto: data/aineisto_fixed.csv data/check_csv.py
 	wc -l $<
 	python data/check_csv.py $<
 
@@ -53,8 +56,8 @@ stamps/cassandra-schema: cassandra/schema.cql cassandra/cpi-schema.cql stamps/ca
 	cat $^ | docker-compose -f cassandra/cassandra-cluster.yml run cqlsh
 	touch $@
 
-stamps/cassandra-import-example: data/aineisto.csv stamps/cassandra-schema
-	echo "COPY foobar.events (peer,time,address,referrer) FROM '/data/aineisto.csv';" \
+stamps/cassandra-import-example: data/aineisto_fixed.csv stamps/cassandra-schema
+	echo "COPY foobar.events (peer,time,address,referrer) FROM '/data/aineisto_fixed.csv';" \
 	| docker run -i --rm --network cassandra_default -v `pwd`/data:/data \
 		--name cassandra-import cassandra cqlsh seed-cassandra
 	touch $@
