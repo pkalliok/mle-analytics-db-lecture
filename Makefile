@@ -20,11 +20,21 @@ data/us-census: data/us-census.zip
 	mkdir -p $@
 	(cd $@ && unzip ../us-census.zip)
 
+data/check_csv.py:
+	curl https://raw.githubusercontent.com/pkalliok/csv-quality-checker/master/check_csv.py > $@
+
 cas-logs:
 	docker-compose -f cassandra/cassandra-cluster.yml logs -f
 
 cou-logs:
 	docker-compose -f couchdb/couchdb-cluster.yml logs -f
+
+check-cpi: data/check_csv.py data/cpi.csv
+	python $< -d '	' data/cpi.csv
+
+check-aineisto: data/aineisto.csv data/check_csv.py 
+	wc -l $<
+	python data/check_csv.py $< | wc -l
 
 stamps/cassandra-seed-up: cassandra/cassandra-cluster.yml
 	docker-compose -f $< up -d seed-cassandra
