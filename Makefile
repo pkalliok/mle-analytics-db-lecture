@@ -34,7 +34,7 @@ check-cpi: data/check_csv.py data/cpi.csv
 
 check-aineisto: data/aineisto.csv data/check_csv.py 
 	wc -l $<
-	python data/check_csv.py $< | wc -l
+	python data/check_csv.py $<
 
 stamps/cassandra-seed-up: cassandra/cassandra-cluster.yml
 	docker-compose -f $< up -d seed-cassandra
